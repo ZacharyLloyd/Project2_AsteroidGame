@@ -21,6 +21,7 @@ public class playerMovement : MonoBehaviour
     private bool reverseThrotleDown; //Detecting reverse throttle
 
     private Rigidbody2D rigidBody; //Giving a name that will reference the rigid body on the sprite
+    public static Vector3 originPosition;
 
     //Awake is called before the first frame
     void Awake()
@@ -120,6 +121,25 @@ public class playerMovement : MonoBehaviour
         {
             if (Mathf.Abs(speed) > 0)
                 speed -= rateOfSpeed * Mathf.Sign(-speed);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy" || collision.tag == "Asteroid")
+        {
+            if (gameManager.instance.playerLives > 0)
+            {
+                gameManager.instance.playerLives--;
+                gameObject.transform.position = originPosition;
+                gameManager.instance.RemoveEnemies();
+                Debug.Log("You now have " + gameManager.instance.playerLives + " lives.");
+            }
+            else
+            {
+                Debug.LogWarning("Player ship was destroyed");
+                Destroy(gameObject);
+            }
+            gameObject.transform.position = originPosition;
         }
     }
 }
